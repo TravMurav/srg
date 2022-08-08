@@ -3,12 +3,12 @@
 
 set -e
 
-ARCH="aarch64"
+BUILD_ARCH="aarch64"
 
 SCRIPT_DIR="$(cd "$(dirname "$1")"; pwd)"
 . "$SCRIPT_DIR/util/util.sh"
 
-BASE_DIR="$SCRIPT_DIR/build-$ARCH"
+BASE_DIR="$SCRIPT_DIR/build-$BUILD_ARCH"
 RECEPIE_DIR="$SCRIPT_DIR/packages"
 TOOLCHAIN_DIR="$BASE_DIR/toolchain"
 DLCACHE_DIR="$BASE_DIR/cache/downloads"
@@ -29,7 +29,7 @@ clean_builddir() {
 
 export MAKEFLAGS="-j$(nproc)"
 
-if [ ! -e "$TOOLCHAIN_DIR/bin/$ARCH-linux-musl-gcc" ]
+if [ ! -e "$TOOLCHAIN_DIR/bin/$BUILD_ARCH-linux-musl-gcc" ]
 then
 	clean_builddir
 	cd "$srcdir"
@@ -45,7 +45,7 @@ then
 	cp -r "$pkgdir"/* $TOOLCHAIN_DIR
 fi
 
-export CROSS_COMPILE="$TOOLCHAIN_DIR/bin/$ARCH-linux-musl-"
+export CROSS_COMPILE="$TOOLCHAIN_DIR/bin/$BUILD_ARCH-linux-musl-"
 
 if [ $# -lt 1 ]
 then
@@ -129,8 +129,10 @@ for PKG in $BUILDPKGS ; do
 		
 		cd $builddir
 
+		echo "Build stage:"
 		build
 
+		echo "Package stage:"
 		package
 
 		tar \
@@ -141,6 +143,8 @@ for PKG in $BUILDPKGS ; do
 			--numeric-owner \
 			-cf "$PKGCACHE_DIR/$pkg_file" \
 			-C "$pkgdir" .
+
+		echo "Package $PKG was built."
 	fi
 
 	tar -xf "$PKGCACHE_DIR/$pkg_file" \
