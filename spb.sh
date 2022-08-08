@@ -34,6 +34,14 @@ then
 	clean_builddir
 	cd "$srcdir"
 	. "$SCRIPT_DIR/host/musl_cross_make.sh"
+	tar \
+		--sort=name \
+		--mtime=0 \
+		--owner=0 \
+		--group=0 \
+		--numeric-owner \
+		-cf "$PKGCACHE_DIR/_host_musl_cross_make.tar.gz" \
+		-C "$pkgdir" .
 	cp -r "$pkgdir"/* $TOOLCHAIN_DIR
 fi
 
