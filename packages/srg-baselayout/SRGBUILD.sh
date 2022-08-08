@@ -1,6 +1,6 @@
 pkgname=srg-baselayout
 pkgver=1
-pkgrel=0
+pkgrel=4
 pkgdesc="Base FS layout for the system rootfs"
 url=""
 
@@ -24,6 +24,7 @@ package() {
 		etc/crontabs \
 		etc/init.d \
 		etc/rcS.d \
+		etc/modules-load.d \
 		mnt \
 		proc \
 		opt \
@@ -79,18 +80,56 @@ package() {
 	cat > "$pkgdir"/etc/init.d/rcS <<-EOF
 		#!/bin/sh
 
+		echo '+-----------------------+'
+		echo '|        srg rcS        |'
+		echo '+-----------------------+'
+
+		for script in /etc/rcS.d/S*
+		do
+			echo [ rcS ] Running \$(basename \$script)
+			\$script
+		done
+
+		echo [ rcS ] Done!
+	EOF
+
+	cat > "$pkgdir"/etc/rcS.d/S05_dmesg <<-EOF
+		#!/bin/sh
+
+		dmesg -n1
+
+	EOF
+
+	cat > "$pkgdir"/etc/rcS.d/S10_mount_sys <<-EOF
+		#!/bin/sh
+
 		mount -t proc none /proc                                                        
 		mount -t sysfs none /sys                                                        
 		mount -t devpts none /dev/pts                                                   
 		mount -t ramfs none /tmp
 
+	EOF
+
+	cat > "$pkgdir"/etc/rcS.d/S20_mdev <<-EOF
+		#!/bin/sh
+
+		echo /sbin/mdev >/proc/sys/kernel/hotplug
 		mdev -s
 
-		for script in /etc/rcS.d/S*
-		do
-			echo [rcS] Starting \$(basename \$script)
-			\$script
+	EOF
+
+	cat > "$pkgdir"/etc/rcS.d/S25_modules <<-EOF
+		#!/bin/sh
+
+		for f in /etc/modules-load.d/*.conf; do
+			[ ! -f "\$f" ] && continue;
+
+			sed -e 's/\#.*//g' -e '/^[[:space:]]*$/d' < "\$f" \
+				| while read module args; do
+				modprobe -q \$module \$args
+			done
 		done
+
 	EOF
 
 	cat > "$pkgdir"/etc/rcS.d/S99_local <<-EOF
@@ -100,7 +139,7 @@ package() {
 
 	chmod +x \
 		"$pkgdir"/etc/init.d/rcS \
-		"$pkgdir"/etc/rcS.d/S99_local
+		"$pkgdir"/etc/rcS.d/S*
 }
 
 

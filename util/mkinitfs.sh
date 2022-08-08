@@ -6,5 +6,5 @@ then
 	exit 1
 fi
 
-(cd "$1"; find . | cpio -o -H newc -R root:root | gzip -9) > "$2"
+(cd "$1"; find . | cpio -o -H newc -R root:root | zstd -19) > "$2"
 

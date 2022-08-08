@@ -126,6 +126,8 @@ for PKG in $BUILDPKGS ; do
 					tar -xf $fname
 			esac
 		done
+
+		cp "$RECEPIE_DIR/$PKG"/* "$srcdir"
 		
 		cd $builddir
 

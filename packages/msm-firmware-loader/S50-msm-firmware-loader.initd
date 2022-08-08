@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/sbin/msm-firmware-loader.sh
