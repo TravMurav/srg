@@ -16,11 +16,13 @@ _builddir="$srcdir/$_name-$_commit"
 tar -xf "$_filename"
 cd $_builddir
 
+echo "Building the toolchain..."
 make \
-	TARGET=aarch64-linux-musl
+	TARGET="$BUILD_ARCH-linux-musl"
 
+echo "Installing the toolchain..."
 make \
-	TARGET="$ARCH-linux-musl" \
+	TARGET="$BUILD_ARCH-linux-musl" \
 	OUTPUT="$pkgdir" \
 	install
 

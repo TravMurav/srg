@@ -4,7 +4,7 @@ pkgrel=0
 pkgdesc="TrueType font rendering library"
 url="https://www.freetype.org/"
 
-depends=""
+depends="musl zlib"
 
 source="
 	https://download.savannah.gnu.org/releases/freetype/freetype-$pkgver.tar.xz
@@ -14,25 +14,25 @@ source="
 builddir="$srcdir/$pkgname-$pkgver"
 
 build() {
-	mv ../ft2demos-$pkgver ft2demos
+	#mv ../ft2demos-$pkgver ft2demos
 
 	./configure \
-		--build=$BUILD_ARCH \
-		--host="x86_64" \
+		--host="$CHOST" \
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--mandir=/usr/share/man \
 		--infodir=/usr/share/info \
 		--enable-static \
+		--with-png=no \
 		--enable-freetype-config
 
 	make
-	make -C ft2demos TOP_DIR=".."
+	#make -C ft2demos TOP_DIR=".."
 }
 
 package() {
 	make DESTDIR="$pkgdir" install
-	make -C ft2demos TOP_DIR=".." DESTDIR="$pkgdir" install
+	#make -C ft2demos TOP_DIR=".." DESTDIR="$pkgdir" install
 }
 
 

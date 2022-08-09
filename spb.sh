@@ -43,9 +43,22 @@ then
 		-cf "$PKGCACHE_DIR/_host_musl_cross_make.tar.gz" \
 		-C "$pkgdir" .
 	cp -r "$pkgdir"/* $TOOLCHAIN_DIR
+
+	echo "Toolchain was built"
 fi
 
-export CROSS_COMPILE="$TOOLCHAIN_DIR/bin/$BUILD_ARCH-linux-musl-"
+export PATH="$TOOLCHAIN_DIR/bin/:$PATH"
+export CHOST="$BUILD_ARCH-linux-musl"
+export CROSS_COMPILE="$TOOLCHAIN_DIR/bin/$CHOST-"
+export CROSS_PREFIX="$CROSS_COMPILE"
+export PKG_CONFIG_PATH="$ROOTFS_DIR/usr/lib/pkgconfig/"
+export PKG_CONFIG_LIBDIR="$PKG_CONFIG_PATH"
+export PKG_CONFIG_SYSROOT_DIR="$ROOTFS_DIR"
+
+export CFLAGS="-Os --sysroot=$ROOTFS_DIR"
+export LDFLAGS="--sysroot=$ROOTFS_DIR"
+
+pkg-config --variable pc_path pkg-config
 
 if [ $# -lt 1 ]
 then
@@ -85,7 +98,8 @@ get_deps() {
 		for dep in $PKGS ; do
 			getdep_rec $dep
 		done
-	} | uniq | tr '\n' ' '
+	} | awk '!x[$0]++' | tr '\n' ' '
+	# https://stackoverflow.com/a/11532197 
 }
 
 BUILDPKGS="$(get_deps $INSTALLPKGS)"
