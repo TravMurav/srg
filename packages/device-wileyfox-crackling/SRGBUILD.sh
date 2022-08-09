@@ -1,6 +1,6 @@
 pkgname=device-wileyfox-crackling
 pkgver=1
-pkgrel=0
+pkgrel=2
 pkgdesc="Device package for Wileyfox Swift"
 url=""
 
@@ -29,7 +29,9 @@ package() {
 	EOF
 
 	cat > "$pkgdir"/boot/cmdline.txt <<-EOF
-		earlycon console=ttyMSM0,115200
+		earlycon console=ttyMSM0,115200 rdinit=/linuxrc
 
 	EOF
+
+	ln -s dtbs/qcom/msm8916-longcheer-l8150.dtb "$pkgdir"/boot/board.dtb
 }

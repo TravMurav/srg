@@ -16,7 +16,7 @@ PKGCACHE_DIR="$BASE_DIR/cache/packages"
 ROOTFS_DIR="$BASE_DIR/rootfs"
 
 # Create the build dir
-mkdir -p $TOOLCHAIN_DIR $DLCACHE_DIR $PKGCACHE_DIR $ROOTFS_DIR
+mkdir -p $BASE_DIR/tmp $TOOLCHAIN_DIR $DLCACHE_DIR $PKGCACHE_DIR $ROOTFS_DIR
 
 pkgdir="$BASE_DIR/build/pkgdir"
 srcdir="$BASE_DIR/build/srcdir"
@@ -57,8 +57,6 @@ export PKG_CONFIG_SYSROOT_DIR="$ROOTFS_DIR"
 
 export CFLAGS="-Os --sysroot=$ROOTFS_DIR"
 export LDFLAGS="--sysroot=$ROOTFS_DIR"
-
-pkg-config --variable pc_path pkg-config
 
 if [ $# -lt 1 ]
 then
