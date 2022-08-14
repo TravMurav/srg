@@ -29,4 +29,3 @@ package() {
 		"$pkgdir/usr/sbin/msm-firmware-loader-unpack.sh"
 }
 
-

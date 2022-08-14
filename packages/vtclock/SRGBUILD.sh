@@ -28,5 +28,5 @@ package() {
 		install
 }
 
-
-
+build_oln="7"
+package_oln="2"

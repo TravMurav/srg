@@ -7,12 +7,13 @@ BUILD_ARCH="aarch64"
 
 SCRIPT_DIR="$(cd "$(dirname "$1")"; pwd)"
 . "$SCRIPT_DIR/util/util.sh"
+. "$SCRIPT_DIR/util/progress.sh"
 
 BASE_DIR="$SCRIPT_DIR/build-$BUILD_ARCH"
 RECEPIE_DIR="$SCRIPT_DIR/packages"
 TOOLCHAIN_DIR="$BASE_DIR/toolchain"
-DLCACHE_DIR="$BASE_DIR/cache/downloads"
-PKGCACHE_DIR="$BASE_DIR/cache/packages"
+DLCACHE_DIR="$BASE_DIR/cache"
+PKGCACHE_DIR="$BASE_DIR/packages"
 ROOTFS_DIR="$BASE_DIR/rootfs"
 
 # Create the build dir
@@ -20,9 +21,13 @@ mkdir -p $BASE_DIR/tmp $TOOLCHAIN_DIR $DLCACHE_DIR $PKGCACHE_DIR $ROOTFS_DIR
 
 pkgdir="$BASE_DIR/build/pkgdir"
 srcdir="$BASE_DIR/build/srcdir"
+
+BUILD_LOGFILE="$BASE_DIR/build/build.log"
+
 clean_builddir() {
 	rm -rf "$pkgdir" "$srcdir"
 	mkdir -p "$pkgdir" "$srcdir"
+	if [ -f "$BUILD_LOGFILE" ]; then mv "$BUILD_LOGFILE" "$BUILD_LOGFILE.old"; fi
 }
 
 # Prepare the cross-compilation tools
@@ -34,6 +39,7 @@ then
 	clean_builddir
 	cd "$srcdir"
 	. "$SCRIPT_DIR/host/musl_cross_make.sh"
+	build 2>&1 | tee "$BUILD_LOGFILE" | progress_bar $build_oln "Toolchain"
 	tar \
 		--sort=name \
 		--mtime=0 \
@@ -66,7 +72,8 @@ fi
 
 INSTALLPKGS="$@"
 
-echo "Requested packages: $INSTALLPKGS"
+echo "Requested packages:"
+echo "$INSTALLPKGS" | fold -sw 60 | sed 's/^/\t/'
 
 # recursively build the dependencies
 
@@ -102,10 +109,31 @@ get_deps() {
 
 BUILDPKGS="$(get_deps $INSTALLPKGS)"
 
-echo "Will be installed: $BUILDPKGS"
+mark_unbuilt() {
+	PKGS="$@"
+	{
+		for PKG in $PKGS ; do
+			recepie="$RECEPIE_DIR/$PKG/SRGBUILD.sh"
+			. $recepie
+			pkg_file="$pkgname-$pkgver-r$pkgrel.tar.gz"
+			if [ ! -f "$PKGCACHE_DIR/$pkg_file" ]
+			then
+				echo "*$PKG"
+			else
+				echo "$PKG"
+			fi
+
+		done
+	} | tr '\n' ' '
+}
+
+echo "Will be installed:"
+echo "$(mark_unbuilt $BUILDPKGS)" | fold -sw 60 | sed 's/^/\t/'
 
 printf "Proceed? [Y] "
 read
+
+mkdir -p "$ROOTFS_DIR/var/srg/"
 
 for PKG in $BUILDPKGS ; do
 	recepie="$RECEPIE_DIR/$PKG/SRGBUILD.sh"
@@ -118,14 +146,20 @@ for PKG in $BUILDPKGS ; do
 	depends=""
 	source=""
 	builddir=""
+	build_oln="0"
+	package_oln="0"
 
 	. $recepie
 	pkg_file="$pkgname-$pkgver-r$pkgrel.tar.gz"
-	echo "$pkg_file - $pkgdesc"
+	_bld=$(printf '\033[1m')
+	_rst=$(printf '\033[0m')
+	pretty_pkg_name="$_bld$pkgname$_rst-$pkgver-r$pkgrel"
+
+	printf "%-40s - %s\n" "$pretty_pkg_name" "$pkgdesc"
 
 	if [ ! -f "$PKGCACHE_DIR/$pkg_file" ]
 	then
-		echo "Need to build this package"
+		printf "Need to build package %s\n" "$pretty_pkg_name"
 		clean_builddir
 		cd $srcdir
 		for src in $source ; do
@@ -134,20 +168,28 @@ for PKG in $BUILDPKGS ; do
 			cp $DLCACHE_DIR/$fname $srcdir
 
 			case $fname in
-				*.tar|*.tar.*)
+				*.tar|*.tar.*|*.tgz)
 					tar -xf $fname
 			esac
 		done
 
 		cp "$RECEPIE_DIR/$PKG"/* "$srcdir"
-		
+
 		cd $builddir
 
-		echo "Build stage:"
-		build
+		build 2>&1 | tee "$BUILD_LOGFILE" | progress_bar $build_oln "Build"
 
-		echo "Package stage:"
-		package
+		build_len=$(wc -l "$BUILD_LOGFILE" | awk '{ print $1; }' )
+
+		package 2>&1 | tee -a "$BUILD_LOGFILE" | progress_bar $package_oln "Package"
+
+		pkg_len=$(wc -l "$BUILD_LOGFILE" | awk '{ print $1; }' )
+
+		if [ $build_oln -eq 0 ] && [ "$pkg_len" -ne 0 ]; then
+			pkg_len=$(( ($pkg_len - $build_len) ))
+			printf '\nbuild_oln="%d"\npackage_oln="%d"\n' $build_len $pkg_len >> "$recepie"
+			echo "Build timings were added to the recepie for $PKG!"
+		fi
 
 		tar \
 			--sort=name \
@@ -158,7 +200,7 @@ for PKG in $BUILDPKGS ; do
 			-cf "$PKGCACHE_DIR/$pkg_file" \
 			-C "$pkgdir" .
 
-		echo "Package $PKG was built."
+		printf "Package %s was built.\n" "$pretty_pkg_name"
 	fi
 
 	tar -xf "$PKGCACHE_DIR/$pkg_file" \
@@ -172,10 +214,8 @@ for PKG in $BUILDPKGS ; do
 		postinstall
 	fi
 
+	[ -z "${INSTALLPKGS##*$PKG*}" ] && echo "$PKG" > "$ROOTFS_DIR/var/srg/world"
 done
 
-mkdir -p "$ROOTFS_DIR/var/srg/"
-for PKG in $INSTALLPKGS ; do
-	echo "$PKG" > "$ROOTFS_DIR/var/srg/world"
-done
+echo "Done! ($(du -sh "$ROOTFS_DIR" | awk '{print $1}'))"
 

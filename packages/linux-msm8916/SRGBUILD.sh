@@ -1,6 +1,6 @@
 pkgname=linux-msm8916
 pkgver=5.18
-pkgrel=0
+pkgrel=1
 pkgdesc="Linux kernel (msm8916)"
 url="https://github.com/msm8916-mainline/linux"
 
@@ -44,6 +44,7 @@ package() {
 		modules_install $_install \
 		ARCH="$_arch" \
 		INSTALL_MOD_PATH="$pkgdir" \
+		INSTALL_MOD_STRIP=1 \
 		INSTALL_PATH="$pkgdir/boot" \
 		INSTALL_DTBS_PATH="$pkgdir/boot/dtbs"
 
@@ -51,3 +52,5 @@ package() {
 }
 
 
+build_oln="4474"
+package_oln="819"

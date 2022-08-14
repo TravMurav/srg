@@ -24,3 +24,6 @@ build() {
 package() {
 	make DESTDIR="$pkgdir" install
 }
+
+build_oln="2836"
+package_oln="234"

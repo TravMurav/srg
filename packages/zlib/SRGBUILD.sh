@@ -28,5 +28,5 @@ package() {
 		DESTDIR="$pkgdir"
 }
 
-
-
+build_oln="61"
+package_oln="14"

@@ -23,4 +23,5 @@ package() {
 	DESTDIR="$pkgdir" meson install --no-rebuild -C _build
 }
 
-
+build_oln="37"
+package_oln="1"

@@ -62,4 +62,3 @@ package() {
 	ln -s /boot/vmlinuz-5.19.0 "$pkgdir"/boot/vmlinuz
 }
 
-

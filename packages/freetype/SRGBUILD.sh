@@ -35,5 +35,5 @@ package() {
 	#make -C ft2demos TOP_DIR=".." DESTDIR="$pkgdir" install
 }
 
-
-
+build_oln="345"
+package_oln="42"

@@ -1,6 +1,6 @@
 pkgname=busybox
 pkgver=1.35.0
-pkgrel=0
+pkgrel=1
 pkgdesc="Size optimized toolbox of many common UNIX utilities"
 url="https://busybox.net/"
 
@@ -29,7 +29,8 @@ package() {
 	
 	chmod 1777 "$pkgdir"/tmp
 
-	install -m755 busybox "$pkgdir"/bin/busybox
-
-	ln -s /bin/busybox "$pkgdir"/bin/sh 
+	make CONFIG_PREFIX="$pkgdir" install 
 }
+
+build_oln="1937"
+package_oln="407"

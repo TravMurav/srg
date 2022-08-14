@@ -30,3 +30,5 @@ package() {
 	make DESTDIR="$pkgdir" install
 }
 
+build_oln="408"
+package_oln="12"
