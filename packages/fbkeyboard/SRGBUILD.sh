@@ -26,10 +26,6 @@ package() {
 		"$pkgdir"/etc/modules-load.d
 
 	cat > "$pkgdir"/etc/rcS.d/S95_fbkeyboard <<-EOF
-		#!/bin/sh
-
-		chvt 2
-		/usr/bin/fbkeyboard &
 	EOF
 
 	cat > "$pkgdir"/etc/modules-load.d/fbkeyboard.conf <<-EOF

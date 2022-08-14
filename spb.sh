@@ -8,6 +8,7 @@ BUILD_ARCH="aarch64"
 SCRIPT_DIR="$(cd "$(dirname "$1")"; pwd)"
 . "$SCRIPT_DIR/util/util.sh"
 . "$SCRIPT_DIR/util/progress.sh"
+. "$SCRIPT_DIR/util/meson.sh"
 
 BASE_DIR="$SCRIPT_DIR/build-$BUILD_ARCH"
 RECEPIE_DIR="$SCRIPT_DIR/packages"
@@ -60,6 +61,8 @@ export CROSS_PREFIX="$CROSS_COMPILE"
 export PKG_CONFIG_PATH="$ROOTFS_DIR/usr/lib/pkgconfig/"
 export PKG_CONFIG_LIBDIR="$PKG_CONFIG_PATH"
 export PKG_CONFIG_SYSROOT_DIR="$ROOTFS_DIR"
+
+export CC="$CHOST-gcc"
 
 export CFLAGS="-Os --sysroot=$ROOTFS_DIR"
 export LDFLAGS="--sysroot=$ROOTFS_DIR"

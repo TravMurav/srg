@@ -1,6 +1,6 @@
 pkgname=srg-baselayout
 pkgver=1
-pkgrel=4
+pkgrel=5
 pkgdesc="Base FS layout for the system rootfs"
 url=""
 
@@ -107,6 +107,7 @@ package() {
 		mount -t sysfs none /sys                                                        
 		mount -t devpts none /dev/pts                                                   
 		mount -t ramfs none /tmp
+		mount -t configfs none /sys/kernel/config
 
 	EOF
 
