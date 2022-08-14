@@ -1,6 +1,6 @@
 pkgname=unudhcpd
 pkgver=0.2.1
-pkgrel=4
+pkgrel=5
 pkgdesc="extremely basic DHCP server that only issues 1 IP address to any client"
 url="https://gitlab.com/postmarketOS/unudhcpd"
 
