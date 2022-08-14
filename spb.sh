@@ -217,7 +217,7 @@ for PKG in $BUILDPKGS ; do
 		postinstall
 	fi
 
-	[ -z "${INSTALLPKGS##*$PKG*}" ] && echo "$PKG" > "$ROOTFS_DIR/var/srg/world"
+	[ -z "${INSTALLPKGS##*$PKG*}" ] && echo "$PKG" >> "$ROOTFS_DIR/var/srg/world"
 done
 
 echo "Done! ($(du -sh "$ROOTFS_DIR" | awk '{print $1}'))"
