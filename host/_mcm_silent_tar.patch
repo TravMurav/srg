@@ -1,5 +1,14 @@
---- Makefile.orig	2022-08-14 11:46:44.646987183 +0500
-+++ Makefile	2022-08-14 11:47:19.071758045 +0500
+--- Makefile.orig	2022-08-14 17:28:33.403138322 +0500
++++ Makefile	2022-08-14 17:29:21.608215234 +0500
+@@ -24,7 +24,7 @@
+ LINUX_SITE = https://cdn.kernel.org/pub/linux/kernel
+ LINUX_HEADERS_SITE = http://ftp.barfooze.de/pub/sabotage/tarballs/
+ 
+-DL_CMD = wget -c -O
++DL_CMD = wget -q -c -O
+ SHA1_CMD = sha1sum -c
+ 
+ COWPATCH = $(CURDIR)/cowpatch.sh
 @@ -105,7 +105,7 @@
  	case "$@" in */*) exit 1 ;; esac
  	rm -rf $@.tmp

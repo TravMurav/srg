@@ -5,15 +5,16 @@ set -e
 
 BUILD_ARCH="armv7"
 
-_toolarch() {
-	local arch="$1"
-	case "$arch" in
-		arm*)		arch="arm" ;;
+_tooltarget() {
+	local tc="$1"
+	case "$tc" in
+		aarch64)	tc="aarch64-linux-musl" ;;
+		arm*)		tc="arm-linux-musleabi" ;;
 	esac
-	echo "$arch"
+	echo "$tc"
 }
 
-TOOLCHAIN_ARCH=$(_toolarch $BUILD_ARCH)
+export CHOST="$(_tooltarget $BUILD_ARCH)"
 
 SCRIPT_DIR="$(cd "$(dirname "$1")"; pwd)"
 . "$SCRIPT_DIR/util/util.sh"
@@ -45,7 +46,7 @@ clean_builddir() {
 
 export MAKEFLAGS="-j$(nproc)"
 
-if [ ! -e "$TOOLCHAIN_DIR/bin/$TOOLCHAIN_ARCH-linux-musl-gcc" ]
+if [ ! -e "$TOOLCHAIN_DIR/bin/$CHOST-gcc" ]
 then
 	clean_builddir
 	cd "$srcdir"
@@ -65,7 +66,6 @@ then
 fi
 
 export PATH="$TOOLCHAIN_DIR/bin/:$PATH"
-export CHOST="$TOOLCHAIN_ARCH-linux-musl"
 export CROSS_COMPILE="$TOOLCHAIN_DIR/bin/$CHOST-"
 export CROSS_PREFIX="$CROSS_COMPILE"
 export PKG_CONFIG_PATH="$ROOTFS_DIR/usr/lib/pkgconfig/"

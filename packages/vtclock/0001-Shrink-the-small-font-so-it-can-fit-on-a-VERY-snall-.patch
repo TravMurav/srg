@@ -1,0 +1,189 @@
+From f795df5ca1d2a6caa7ccda6f2066c407cee4f058 Mon Sep 17 00:00:00 2001
+From: Nikita Travkin <nikita@trvn.ru>
+Date: Sun, 14 Aug 2022 20:33:27 +0500
+Subject: [PATCH] Shrink the small font so it can fit on a VERY snall screen
+
+---
+ font2.h | 165 +++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 87 insertions(+), 78 deletions(-)
+
+diff --git a/font2.h b/font2.h
+index 0123ff2..4dccef1 100644
+--- a/font2.h
++++ b/font2.h
+@@ -1,85 +1,94 @@
+ #include "font.h"
+ 
+ static vtclock_font vtclock_font_2 = {
+-  7, 7, 3,
++  7, 6, 2,
+   {
+-    "  XXX \n"
+-    " X   X\n"
+-    " X  XX\n"
+-    " X X X\n"
+-    " XX  X\n"
+-    " X   X\n"
+-    "  XXX \n",
+-    "   X  \n"
+-    "  XX  \n"
+-    "   X  \n"
+-    "   X  \n"
+-    "   X  \n"
+-    "   X  \n"
+-    "  XXX \n",
+-    "  XXX \n"
+-    " X   X\n"
+-    "     X\n"
+-    "    X \n"
+-    "   X  \n"
+-    "  X   \n"
+-    " XXXXX\n",
+-    " XXXXX\n"
+-    "    X \n"
+-    "   X  \n"
+-    "    X \n"
+-    "     X\n"
+-    " X   X\n"
+-    "  XXX \n",
+-    "    X \n"
+-    "   XX \n"
+-    "  X X \n"
+-    " X  X \n"
+-    " XXXXX\n"
+-    "    X \n"
+-    "    X \n",
+-    " XXXXX\n"
+-    " X    \n"
+-    " XXXX \n"
+-    "     X\n"
+-    "     X\n"
+-    " X   X\n"
+-    "  XXX \n",
+-    "   XXX\n"
+-    "  X   \n"
+-    " X    \n"
+-    " XXXX \n"
+-    " X   X\n"
+-    " X   X\n"
+-    "  XXX \n",
+-    " XXXXX\n"
+-    "     X\n"
+-    "    X \n"
+-    "   X  \n"
+-    "  X   \n"
+-    "  X   \n"
+-    "  X   \n",
+-    "  XXX \n"
+-    " X   X\n"
+-    " X   X\n"
+-    "  XXX \n"
+-    " X   X\n"
+-    " X   X\n"
+-    "  XXX \n",
+-    "  XXX \n"
+-    " X   X\n"
+-    " X   X\n"
+-    "  XXXX\n"
+-    "     X\n"
+-    "    X \n"
+-    " XXX  \n",
++    "  XX \n"
++    " X  X\n"
++    " X /X\n"
++    " X/ X\n"
++    " X  X\n"
++    " X  X\n"
++    "  XX \n",
++
++    "   X \n"
++    "  XX \n"
++    "   X \n"
++    "   X \n"
++    "   X \n"
++    "   X \n"
++    "  XXX\n",
++
++    "  XX \n"
++    " X  X\n"
++    "    X\n"
++    "   X \n"
++    "  X  \n"
++    " X   \n"
++    " XXXX\n",
++
++    " XXXX\n"
++    "   X \n"
++    "  X  \n"
++    "   X \n"
++    "    X\n"
++    " X  X\n"
++    "  XX \n",
++
++    "   X \n"
++    "  XX \n"
++    " X X \n"
++    "X  X \n"
++    "XXXXX\n"
++    "   X \n"
++    "   X \n",
++
++    " XXXX\n"
++    " X   \n"
++    " XXX \n"
++    "    X\n"
++    "    X\n"
++    " X  X\n"
++    "  XX \n",
++
++    "   XX\n"
++    "  X  \n"
++    " X   \n"
++    " XXX \n"
++    " X  X\n"
++    " X  X\n"
++    "  XX \n",
++
++    " XXXX\n"
++    "    X\n"
++    "   X \n"
++    "  X  \n"
++    "  X  \n"
++    "  X  \n"
++    "  X  \n",
++
++    "  XX \n"
++    " X  X\n"
++    " X  X\n"
++    "  XX \n"
++    " X  X\n"
++    " X  X\n"
++    "  XX \n",
++
++    "  XX \n"
++    " X  X\n"
++    " X  X\n"
++    "  XXX\n"
++    "    X\n"
++    "   X \n"
++    " XX  \n",
+   },
+-  "  \n"
+-  " X\n"
+-  "  \n"
+-  "  \n"
+-  "  \n"
+-  " X\n"
+-  "  \n"
++  " \n"
++  "X\n"
++  " \n"
++  " \n"
++  " \n"
++  "X\n"
++  " \n"
+ };
+ 
+-- 
+2.35.3
+

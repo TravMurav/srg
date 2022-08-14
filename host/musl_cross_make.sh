@@ -17,14 +17,14 @@ cp $DLCACHE_DIR/$_filename .
 tar -xf "$_filename"
 cd $_builddir
 
-cat "$SCRIPT_DIR/host/_mcm_silent_tar.patch" | ./cowpatch.sh
-
 build() {
-	make \
-		TARGET="$TOOLCHAIN_ARCH-linux-musl"
+	cat "$SCRIPT_DIR/host/_mcm_silent_tar.patch" | ./cowpatch.sh
 
 	make \
-		TARGET="$TOOLCHAIN_ARCH-linux-musl" \
+		TARGET="$CHOST"
+
+	make \
+		TARGET="$CHOST" \
 		OUTPUT="$pkgdir" \
 		install
 }
