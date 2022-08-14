@@ -21,10 +21,10 @@ cat "$SCRIPT_DIR/host/_mcm_silent_tar.patch" | ./cowpatch.sh
 
 build() {
 	make \
-		TARGET="$BUILD_ARCH-linux-musl"
+		TARGET="$TOOLCHAIN_ARCH-linux-musl"
 
 	make \
-		TARGET="$BUILD_ARCH-linux-musl" \
+		TARGET="$TOOLCHAIN_ARCH-linux-musl" \
 		OUTPUT="$pkgdir" \
 		install
 }
