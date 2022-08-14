@@ -106,5 +106,5 @@ setup_usb_network_configfs
 start_unudhcpd
 
 # Yes, this opens the root shell. Sorry no sory.
-telnetd -l /bin/sh -F $IP
+telnetd -l /bin/sh -b $IP
 
