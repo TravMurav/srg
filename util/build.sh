@@ -74,9 +74,9 @@ build_package() {
 		clean_builddir
 		cd $srcdir
 		for src in $source ; do
-			cached_wget $src
+			cached_wget $pkgname $src
 			fname=$(basename $src)
-			cp $DLCACHE_DIR/$fname $srcdir
+			cp $DLCACHE_DIR/$pkgname/$fname $srcdir
 
 			case $fname in
 				*.tar|*.tar.*|*.tgz)

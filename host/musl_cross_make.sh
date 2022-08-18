@@ -11,10 +11,10 @@ _builddir="$srcdir/$_name-$_commit"
 
 build_oln="24324"
 
-cached_wget $_uri $_filename
-cp $DLCACHE_DIR/$_filename .
-
+cached_wget _host_$_name $_uri $_filename
+cp $DLCACHE_DIR/_host_$_name/$_filename .
 tar -xf "$_filename"
+
 cd $_builddir
 
 build() {

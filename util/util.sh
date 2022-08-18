@@ -14,18 +14,20 @@ assert() {
 
 # Will download file if not in cache yet.
 cached_wget() {
-	URI="$1"
-	FILENAME="$2"
+	NS="$1"
+	URI="$2"
+	FILENAME="$3"
 	if [ -z "$FILENAME" ]
 	then
 		FILENAME="$(basename $URI)"
 	fi
 
-	if [ ! -f "$DLCACHE_DIR/$FILENAME" ]
+	if [ ! -f "$DLCACHE_DIR/$NS/$FILENAME" ]
 	then
-		wget -q --show-progress "$URI" -O "$DLCACHE_DIR/$FILENAME"
+		mkdir -p "$DLCACHE_DIR/$NS"
+		wget -q --show-progress "$URI" -O "$DLCACHE_DIR/$NS/$FILENAME"
 	else
-		echo "$FILENAME was already in the cache."
+		echo "$FILENAME was already in the cache." >&2
 	fi
 }
 

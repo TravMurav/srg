@@ -15,15 +15,33 @@ usage()
 	echo
 	echo "Options:"
 	echo "  -a arch   Set build arch (Will be saved)"
+	echo "  -D        Delete the rootfs"
+	echo "  -r file   Append packages from file"
+	echo "  -R        Rebuild the rootfs"
+	echo "            Equivalent to -Dr rootfs/.../srg/world"
 	echo "  -h        Display this message"
 	echo
 }
 
-while getopts ":ha:" opt
+_nuke_rootfs="0"
+_reinstall_rootfs="0"
+_file_pkgs=""
+
+while getopts ":a:Dr:Rh" opt
 do
 	case $opt in
 		a)
 			echo "$OPTARG" > "$SCRIPT_DIR/.target_arch"
+			;;
+		D)
+			_nuke_rootfs="1"
+			;;
+		r)
+			_file_pkgs="$_file_pkgs $(cat $OPTARG)"
+			;;
+		R)
+			_nuke_rootfs="1"
+			_reinstall_rootfs="1"
 			;;
 		h)
 			usage
@@ -92,24 +110,39 @@ export CC="$CHOST-gcc"
 export CFLAGS="-w -Os --sysroot=$ROOTFS_DIR"
 export LDFLAGS="--sysroot=$ROOTFS_DIR"
 
-if [ $# -lt 1 ]
+[ "$_reinstall_rootfs" -ne 1 ] || _file_pkgs="$_file_pkgs $(cat $ROOTFS_DIR/var/srg/world)"
+
+INSTALLPKGS="$_file_pkgs $@"
+INSTALLPKGS=$(echo $INSTALLPKGS | tr ' ' '\n' | awk '!x[$0]++' | tr '\n' ' ')
+
+if [ "$INSTALLPKGS" = " " ]
 then
 	echo "No package names supplied"
 	exit 0
 fi
 
-INSTALLPKGS="$@"
-
+echo
 echo "Requested packages:"
 echo "$INSTALLPKGS" | fold -sw 60 | sed 's/^/\t/'
+echo
 
 # recursively build the dependencies
 BUILDPKGS="$(get_deps $INSTALLPKGS)"
 
 echo "Will be installed:"
 echo "$(mark_unbuilt $BUILDPKGS)" | fold -sw 60 | sed 's/^/\t/'
+echo
+
+[ "$_nuke_rootfs" -ne 1 ] || echo "Rootfs will be cleared before build"
 
 printf "Proceed? [Y] "; read
+echo
+
+if [ "$_nuke_rootfs" -eq 1 ]
+then
+	rm -rf "$ROOTFS_DIR"
+	mkdir -p "$ROOTFS_DIR"
+fi
 
 mkdir -p "$ROOTFS_DIR/var/srg/"
 
