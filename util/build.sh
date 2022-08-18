@@ -26,6 +26,9 @@ get_toolchain_chost() {
 prepare_toolchain() {
 	if [ ! -e "$TOOLCHAIN_DIR/bin/$CHOST-gcc" ]
 	then
+		echo "Toolchain for $CHOST must be built."
+		printf "Proceed? [Y] "; read
+
 		clean_builddir
 		cd "$srcdir"
 

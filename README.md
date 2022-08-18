@@ -33,14 +33,15 @@ Usage
 Invoking `./spb.sh [list of packages]` should be sufficient. The script will
 check the cache and build the toolchain and missing packages if needed.
 
-You should get your rootfs in `build-ARCH/rootfs`
+First time launching `spb.sh` you must set the target arch with the `-a` flag.
+On subsequent executions it will be saved.
 
-At this time, `aarch64` is hardcoded in the start of `spb.sh`
+You should get your rootfs in `build-ARCH/rootfs`
 
 ### Example booting in qemu
 
 ```
-./spb.sh linux-virt busybox srg-baselayout
+./spb.sh -a aarch64 linux-virt busybox srg-baselayout
 mkdir build-aarch64/tmp/
 ./util/mkinitfs.sh ./build-aarch64/rootfs/ ./build-aarch64/tmp/initramfs
 qemu-system-aarch64 \

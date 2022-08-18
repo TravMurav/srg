@@ -3,14 +3,55 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "$0")"; pwd)"
+
+# Check the cli flags first so modules can access the
+# settings applied here.
+
+usage()
+{
+	echo "Usage:  $0 [option]... [package]..."
+	echo "Compile and install packages into the rootfs"
+	echo
+	echo "Options:"
+	echo "  -a arch   Set build arch (Will be saved)"
+	echo "  -h        Display this message"
+	echo
+}
+
+while getopts ":ha:" opt
+do
+	case $opt in
+		a)
+			echo "$OPTARG" > "$SCRIPT_DIR/.target_arch"
+			;;
+		h)
+			usage
+			exit 0 ;;
+		*)
+			usage
+			echo "Unkown option: -$OPTARG"
+			echo
+			exit 1 ;;
+	esac
+done
+shift $(($OPTIND-1))
+
 # Find where we are and import other modules
-SCRIPT_DIR="$(cd "$(dirname "$1")"; pwd)"
 . "$SCRIPT_DIR/util/util.sh"
+. "$SCRIPT_DIR/util/color.sh"
 . "$SCRIPT_DIR/util/build.sh"
 . "$SCRIPT_DIR/util/progress.sh"
 . "$SCRIPT_DIR/util/meson.sh"
 
-BUILD_ARCH="armv7"
+if ! [ -f "$SCRIPT_DIR/.target_arch" ]
+then
+	echo "Target arch is not set, use -a"
+	exit 1
+fi
+
+BUILD_ARCH="$(cat "$SCRIPT_DIR/.target_arch")"
+echo "Target arch: $BUILD_ARCH"
 
 export CHOST="$(get_toolchain_chost $BUILD_ARCH)"
 
@@ -68,8 +109,7 @@ BUILDPKGS="$(get_deps $INSTALLPKGS)"
 echo "Will be installed:"
 echo "$(mark_unbuilt $BUILDPKGS)" | fold -sw 60 | sed 's/^/\t/'
 
-printf "Proceed? [Y] "
-read
+printf "Proceed? [Y] "; read
 
 mkdir -p "$ROOTFS_DIR/var/srg/"
 
