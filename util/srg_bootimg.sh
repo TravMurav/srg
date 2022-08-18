@@ -1,10 +1,11 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT
 
 set -e
 
 BUILDDIR="./build-aarch64"
 
-./util/strip_rootfs.sh
+./util/strip_rootfs.sh $BUILDDIR
 
 ./util/mkinitfs.sh \
 	$BUILDDIR/rootfs/ \
@@ -12,7 +13,7 @@ BUILDDIR="./build-aarch64"
 
 cat $BUILDDIR/rootfs/boot/vmlinuz-* $BUILDDIR/rootfs/boot/board.dtb > $BUILDDIR/tmp/vmlinuz-dtb
 
-../lk2nd/lk2nd/scripts/mkbootimg \
+../util/mkbootimg \
 	--kernel $BUILDDIR/tmp/vmlinuz-dtb \
 	--ramdisk $BUILDDIR/tmp/initramfs \
 	--cmdline "$(cat $BUILDDIR/rootfs/boot/cmdline.txt)" \
