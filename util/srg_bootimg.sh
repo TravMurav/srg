@@ -3,7 +3,16 @@
 
 set -e
 
-BUILDDIR="./build-aarch64"
+if ! [ -f "$SCRIPT_DIR/.target_arch" ]
+then
+	echo "Target arch is not set, use \"spb -a\""
+	exit 1
+fi
+
+BUILD_ARCH="$(cat "$SCRIPT_DIR/.target_arch")"
+echo "Target arch: $BUILD_ARCH"
+
+BUILDDIR="./build-$BUILD_ARCH"
 
 ./util/strip_rootfs.sh $BUILDDIR
 
