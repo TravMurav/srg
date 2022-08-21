@@ -41,7 +41,7 @@ prepare_toolchain() {
 			--owner=0 \
 			--group=0 \
 			--numeric-owner \
-			-cf "$PKGCACHE_DIR/_host_musl_cross_make.tar.gz" \
+			-czf "$PKGCACHE_DIR/_host_musl_cross_make.tar.gz" \
 			-C "$pkgdir" .
 
 		cp -r "$pkgdir"/* $TOOLCHAIN_DIR
@@ -108,7 +108,7 @@ build_package() {
 			--owner=0 \
 			--group=0 \
 			--numeric-owner \
-			-cf "$PKGCACHE_DIR/$pkg_file" \
+			-czf "$PKGCACHE_DIR/$pkg_file" \
 			-C "$pkgdir" .
 
 		printf "Package %s was built.\n" "$pretty_pkg_name"
