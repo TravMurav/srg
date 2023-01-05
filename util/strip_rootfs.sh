@@ -25,7 +25,10 @@ find $ROOTFS_DIR -iwholename '*/lib/*.a' -delete
 
 # Drop most terminfo entries
 # all the usual ones seem to be in the /etc anyway, symlinks will be kept
-find "$ROOTFS_DIR/usr/share/terminfo" -type f -delete
+if [ -d "$ROOTFS_DIR/usr/share/terminfo" ]
+then
+	find "$ROOTFS_DIR/usr/share/terminfo" -type f -delete
+fi
 
 du -sh $ROOTFS_DIR
 
