@@ -1,6 +1,6 @@
 pkgname=linux-msm8916
-pkgver=5.18
-pkgrel=1
+pkgver=6.1
+pkgrel=0
 pkgdesc="Linux kernel (msm8916)"
 url="https://github.com/msm8916-mainline/linux"
 
@@ -9,12 +9,18 @@ _arch="arm64"
 
 source="
 	$url/archive/$_tag.tar.gz
-	https://gitlab.com/postmarketOS/pmaports/-/raw/master/device/community/linux-postmarketos-qcom-msm8916/config-postmarketos-qcom-msm8916.aarch64
+	https://gitlab.com/postmarketOS/pmaports/-/raw/47e1660711bfb770ca1b6bb87603f5c4831803ef/device/community/linux-postmarketos-qcom-msm8916/config-postmarketos-qcom-msm8916.aarch64
 "
 
 builddir="$srcdir/linux-${_tag#v}"
 
 build() {
+
+	for p in "$srcdir"/*.patch
+	do
+		cat "$p" | patch -p1
+	done
+
 	mkdir "$builddir/out"
 	cp "$srcdir/config-postmarketos-qcom-msm8916.aarch64" "$builddir/out/.config"
 	make \
@@ -47,10 +53,8 @@ package() {
 		INSTALL_MOD_STRIP=1 \
 		INSTALL_PATH="$pkgdir/boot" \
 		INSTALL_DTBS_PATH="$pkgdir/boot/dtbs"
-
-	ln -s /boot/vmlinuz-5.18.0-msm8916 "$pkgdir"/boot/vmlinuz
 }
 
 
-build_oln="4474"
-package_oln="819"
+build_oln="4663"
+package_oln="910"
